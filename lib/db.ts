@@ -1,17 +1,26 @@
-// Simple DB helper placeholder — use pg or supabase-js in real setup
-import { Client } from 'pg'
+// TypeScript DB helper using pg Pool
+import { Pool, QueryResult } from 'pg'
 
 const connectionString = process.env.DATABASE_URL || ''
 
-export async function query(text: string, params?: unknown[]) {
-  const client = new Client({ connectionString })
-  await client.connect()
-  try {
-    const res = await client.query(text, params as any)
-    return res
-  } finally {
-    await client.end()
-  }
+const pool = new Pool({ connectionString })
+
+export async function query<T = any>(text: string, params?: unknown[]): Promise<QueryResult<T>> {
+  return pool.query<T>(text, params as any)
 }
 
-export default { query }
+export function getPool() {
+  return pool
+}
+
+// Graceful shutdown helper (useful in tests)
+export async function shutdown() {
+  await pool.end()
+}
+
+export default { query, getPool, shutdown }
+
+/* Usage example (TypeScript):
+import db from './lib/db'
+await db.query('SELECT 1')
+*/

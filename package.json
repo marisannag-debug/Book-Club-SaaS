@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint || true",
+    "test:db": "node tests/db/migration-smoke.test.js && node tests/db/integration.test.js",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "test": "echo \"Run unit tests\" && exit 0"
   },
   "dependencies": {
+    "pg": "^8.11.0",
     "next": "13.4.18",
     "react": "18.2.0",
     "react-dom": "18.2.0"
