@@ -1,18 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import db from '../../../lib/db'
 
-// validator may be zod-based or a runtime fallback (lib/validators/club.js)
-const { ClubCreateSchema } = require('../../../lib/validators/club')
-const { generateInviteCode } = require('../../../lib/utils/invite')
+// validator may be zod-based or a runtime fallback (lib/validators/index.js)
+const { ClubCreateSchema } = require('../../../lib/validators')
+const { generateInviteCode } = require('../../../lib/utils')
 
 async function getClubs(req: NextApiRequest, res: NextApiResponse) {
   const limit = parseInt((req.query.limit as string) || '50', 10)
   const offset = parseInt((req.query.offset as string) || '0', 10)
-  const result = await db.query(
-    'SELECT id, name, description, organizer_id AS "organizerId", invite_code AS "inviteCode" FROM clubs ORDER BY created_at DESC LIMIT $1 OFFSET $2',
-    [limit, offset]
-  )
-  return res.status(200).json({ clubs: result.rows })
+  try {
+    const result = await db.query(
+      'SELECT id, name, description, organizer_id AS "organizerId", invite_code AS "inviteCode" FROM clubs ORDER BY created_at DESC LIMIT $1 OFFSET $2',
+      [limit, offset]
+    )
+    return res.status(200).json({ clubs: result.rows })
+  } catch (err) {
+    console.warn('DB read failed, returning empty clubs list', err)
+    return res.status(200).json({ clubs: [] })
+  }
 }
 
 async function createClub(req: NextApiRequest, res: NextApiResponse) {

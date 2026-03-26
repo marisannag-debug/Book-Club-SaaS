@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { ClubCreateSchema } = require('../../lib/validators/club')
+const { ClubCreateSchema } = require('../../lib/validators')
 
 function testValid() {
   const res = ClubCreateSchema.safeParse({ name: 'Książkoholicy' })

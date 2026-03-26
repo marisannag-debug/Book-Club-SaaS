@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { generateInviteCode } = require('../../lib/utils/invite')
+const { generateInviteCode } = require('../../lib/utils')
 
 function testLength() {
   const code = generateInviteCode(9)
