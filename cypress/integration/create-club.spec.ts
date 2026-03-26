@@ -2,8 +2,8 @@ describe('Create Club', () => {
   it('creates a club and redirects', () => {
     cy.intercept('POST', '/api/clubs').as('createClub')
     cy.visit('/app/clubs/new')
-    cy.get('[data-cy=create-club-name]').focus().type('Cypress Club', { force: true })
-    cy.get('[data-cy=create-club-description]').focus().type('E2E test club', { force: true })
+    cy.get('[data-cy=create-club-name]').invoke('val', 'Cypress Club').trigger('input')
+    cy.get('[data-cy=create-club-description]').invoke('val', 'E2E test club').trigger('input')
     cy.get('[data-cy=create-club-submit]').click()
     cy.wait('@createClub', { timeout: 10000 }).then((inter) => {
       expect(inter.response && inter.response.statusCode).to.equal(201)
