@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ClubCreateSchema } from '../../lib/validators/club'
+import ClubCreateSchema from '../../lib/validators/club'
 import { Input } from '../../components/ui/Input'
 import { Textarea } from '../../components/ui/Textarea'
 import { Button } from '../../components/ui/Button'
@@ -14,7 +14,9 @@ type FormData = { name: string; description?: string }
 export default function ClubForm() {
   const router = useRouter()
   const [toast, setToast] = useState('')
-  const { register, handleSubmit, formState } = useForm<FormData>({ resolver: zodResolver(ClubCreateSchema as any) })
+  const { register, handleSubmit, formState } = useForm<FormData>({
+    resolver: zodResolver(ClubCreateSchema as any),
+  })
 
   async function onSubmit(data: FormData) {
     try {
@@ -36,7 +38,7 @@ export default function ClubForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <label className="block">
           <div className="text-sm font-medium mb-1">Nazwa klubu</div>
-          <Input data-cy="create-club-name" placeholder="Nazwa" {...register('name')} aria-invalid={!!formState.errors.name} />
+          <Input data-cy="create-club-name" placeholder="Nazwa" {...register('name', { required: true, minLength: 3 })} aria-invalid={!!formState.errors.name} />
         </label>
         <label className="block">
           <div className="text-sm font-medium mb-1">Opis (opcjonalnie)</div>
