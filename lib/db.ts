@@ -1,12 +1,18 @@
 // TypeScript DB helper using pg Pool
-import { Pool, QueryResult } from 'pg'
+import { Pool } from 'pg'
 
-const connectionString = process.env.DATABASE_URL || ''
+const connectionString =
+  process.env.DATABASE_URL || process.env.TEST_DATABASE_URL || 'postgres://test:testpass@localhost:5432/test_db'
 
 const pool = new Pool({ connectionString })
 
-export async function query<T = any>(text: string, params?: unknown[]): Promise<QueryResult<T>> {
-  return pool.query<T>(text, params as any)
+export async function query(text: string, params?: unknown[]): Promise<any> {
+  try {
+    return await pool.query(text, params as any)
+  } catch (err) {
+    console.error('DB query error', err)
+    throw err
+  }
 }
 
 export function getPool() {

@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Create Club', () => {
   it('creates a club via API and the club page is accessible', () => {
     // Ensure the new club page renders
