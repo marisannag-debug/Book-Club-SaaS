@@ -1,4 +1,48 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import db from '../../../lib/db'
+
+const { ClubCreateSchema } = require('../../../lib/validators/club')
+const { generateInviteCode } = require('../../../lib/utils/invite')
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    if (req.method === 'GET') {
+      const limit = parseInt((req.query.limit as string) || '50', 10)
+      const offset = parseInt((req.query.offset as string) || '0', 10)
+      const result = await db.query(
+        'SELECT id, name, description, organizer_id AS "organizerId", invite_code AS "inviteCode" FROM clubs ORDER BY created_at DESC LIMIT $1 OFFSET $2',
+        [limit, offset]
+      )
+      return res.status(200).json({ clubs: result.rows })
+    }
+
+    if (req.method === 'POST') {
+      const parsed = ClubCreateSchema.safeParse(req.body)
+      if (!parsed.success) {
+        return res.status(400).json({ error: 'Validation failed', issues: parsed.error.format() })
+      }
+
+      const { name, description } = parsed.data
+      const inviteCode = generateInviteCode()
+
+      const insert = await db.query(
+        'INSERT INTO clubs (name, description, invite_code) VALUES ($1, $2, $3) RETURNING id',
+        [name, description || null, inviteCode]
+      )
+
+      const id = insert.rows[0].id
+      return res.status(201).json({ id, inviteCode })
+    }
+
+    res.setHeader('Allow', ['GET', 'POST'])
+    return res.status(405).end(`Method ${req.method} Not Allowed`)
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('API /api/clubs error', err)
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
+import type { NextApiRequest, NextApiResponse } from 'next'
 import ClubCreateSchema from '../../../lib/validators/club'
 import db from '../../../lib/db'
 import { generateInviteCode } from '../../../lib/utils/invite'

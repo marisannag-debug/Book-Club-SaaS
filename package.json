@@ -10,12 +10,14 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test:db": "node tests/db/migration-smoke.test.js && node tests/db/integration.test.js",
+    "test:unit": "node tests/unit/validator.test.js && node tests/unit/invite.test.js",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "test": "echo \"Run unit tests\" && exit 0"
   },
   "dependencies": {
     "pg": "^8.11.0",
     "next": "13.4.18",
+    "zod": "^4.25.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
