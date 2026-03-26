@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint || true",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "test:db": "node tests/db/migration-smoke.test.js && node tests/db/integration.test.js",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "test": "echo \"Run unit tests\" && exit 0"
